@@ -26,3 +26,21 @@ application will be implemented in are:
     the GUI, instead of a storyboard.
 
 
+## Background
+
+Xcode is the IDE provided by Apple and ships with a compiler, SDK and all other
+tool that are necessary to create applications for all Apple's devices.
+
+As part of the SDK is the Cocoa framework. This is the framework used to create
+native macOS applications with a GUI. The Cocoa framework is, what's called, an
+umbrella framework. That means that it doesn't contain much code of its own but
+instead depends on other frameworks for that. Cocoa consists of three frameworks:
+Foundation, AppKit and CoreData. Foundation contains building blocks for writing
+Objective-C code, functionality for dealing with strings, arrays, sockets, files,
+paths and so on. It's the closets thing Objective-C has to a standard library.
+Next is the AppKit framework. This is the framework that provides the actual GUI
+components, like windows, buttons, text areas, scrollbars and so on. Finally
+there's CoreData, which deals with object persistance and related functionality.
+We will not use CoreData for this application.
+
+Storyboards
