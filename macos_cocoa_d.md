@@ -33,6 +33,25 @@ application will be implemented in are:
 Xcode is the IDE provided by Apple and ships with a compiler, SDK and all other
 tool that are necessary to create applications for all Apple's devices.
 
+### Storyboards
+
+Xcode comes with a built-in feature that allows the developer to graphically
+create the GUI of an application. This is called Interface Builder. The GUI is
+stored in files separate from the application, basically a serialized form of
+the GUI. These files are called `.nib` files and the data is stored in a binary
+format. Later support was added for `.xib` files, which is the same idea but the
+data stored as XML instead of binary. This is more friendly for source control.
+The last incarnation of these files are storyboards. Where `.nib` and `.xib`
+files contain the GUI for only a single view, storyboards can contain the GUI
+for multiple views. For example, a window and the dialogs that can be opened
+from that window.
+
+The advantage of storying the GUI files separately from the application is that
+if they are changed, the application does not need to be rebuilt. They also
+allow to lazily load the GUI. For example, if the preferences view is stored in
+a separate file and the user never opens the preferences view, then it never
+needs to be loaded.
+
 ### The Cocoa Framework
 
 As part of the SDK is the Cocoa framework. This is the framework used to create
@@ -56,22 +75,3 @@ components, like windows, buttons, text areas, scrollbars and so on.
 
 Finally there's CoreData, which deals with object persistance and related
 functionality. We will not use CoreData for this application.
-
-### Storyboards
-
-Xcode comes with a built-in feature that allows the developer to graphically
-create the GUI of an application. This is called Interface Builder. The GUI is
-stored in files separate from the application, basically a serialized form of
-the GUI. These files are called `.nib` files and the data is stored in a binary
-format. Later support was added for `.xib` files, which is the same idea but the
-data stored as XML instead of binary. This is more friendly for source control.
-The last incarnation of these files are storyboards. Where `.nib` and `.xib`
-files contain the GUI for only a single view, storyboards can contain the GUI
-for multiple views. For example, a window and the dialogs that can be opened
-from that window.
-
-The advantage of storying the GUI files separately from the application is that
-if they are changed, the application does not need to be rebuilt. They also
-allow to lazily load the GUI. For example, if the preferences view is stored in
-a separate file and the user never opens the preferences view, then it never
-needs to be loaded.
