@@ -75,3 +75,18 @@ components, like windows, buttons, text areas, scrollbars and so on.
 
 Finally there's CoreData, which deals with object persistance and related
 functionality. We will not use CoreData for this application.
+
+### header
+
+One problem with these frameworks, and many other of Apple's frameworks, is that
+they're implemented in Objective-C. For most languages, to interface with
+Objective-C requires to use the Objective-C runtime. The Objective-C runtime
+provides a C API to create classes, instantiate classes, call methods and so on.
+It's quite tedious, verbose and difficult to use this API correctly. Except for
+Swift, which has been created by Apple to replace Objective-C, D is the only
+language which has native language support for interfacing with Objective-C.
+
+In the latest release of D ([DMD 2.095.0](https://dlang.org/changelog/2.095.0.html)),
+support for interfacing with Objective-C protocols has been added. This is the
+final piece (more or less) to allow to fully interface with Objective-C code
+without having to manually call the Objective-C runtime.
