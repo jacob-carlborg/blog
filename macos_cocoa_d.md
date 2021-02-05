@@ -96,6 +96,8 @@ without having to manually call the Objective-C runtime.
 In the first implementation of the application, Xcode will drive the build
 process this will be the most idiomatic way for building applications for macOS.
 
+### Create the Xcode Project
+
 The first step is to create a new project in Xcode. At the Xcode launch screen,
 click `Create a new Xcode project`:
 
@@ -111,8 +113,9 @@ click next:
 
 ![Xcode project options](method_1/light/xcode_project_options.png)
 
-After that, Xcode will show its main window with the project. Click the play
-button in the toolbar to make sure that the project compiles and runs:
+Choose a directory where the project will be saved and click `Create`. After
+that, Xcode will show its main window with the project. Click the play button
+in the toolbar to make sure that the project compiles and runs:
 
 ![Xcode main window](method_1/light/xcode_main_window.png)
 
@@ -121,3 +124,136 @@ window:
 
 ![First window](method_1/light/first_window.png)
 
+### Initialize the dub Project
+
+[Dub](https://dub.pm/getting_started) will be used to build the D source code
+and Xcode will link the binary and do all the other things that is part of
+building a macOS application.
+
+The first step is to initialize a Dub project within the Xcode project. Open
+the Terminal, navigate to the directory where the Xcode project was saved.
+Execute the following command to initialize a Dub project using the SDLang
+format for the package description file:
+
+```
+dub init -f sdl -n .
+```
+
+Open the `dub.sdl` file that was created in the current directory when
+initializing the Dub project. Specify that Dub should build the project as a
+library by adding the following line:
+
+```sdl
+targetType "library"
+```
+
+### Replace Objective-C with D
+
+Now it's time to replace the existing Objective-C with pure D code. If we take
+a look at the existing Objective-C files and headers, we can see that the code
+depends, either directly or indirectly, on the following framework types:
+
+* `NSViewController`
+* `NSResponder`
+* `NSObject`
+* `NSApplicationDelegate`
+* `NSNotification`
+
+To use these types from D, bindings need to be created for the types and the
+methods the application is going to use. Since `NSObject` is the root class
+of all classes in Objective-C, it's a good place to start:
+
+#### `NSObject`
+
+The NSObject type is a bit special, because there's both a class that is named
+`NSObject` and a protocol (which corresponds to an interface in D) with the
+same name. In Objective-C classes and protocols live in different namespaces
+and therefore can share the same name.
+
+In D, classes and interfaces live in the same namespace so it's not possible to
+have a class and an interface with the same name in D. Fortunately, for our
+application, it's enough to use the `NSObject` class and declare any methods
+defined in the `NSObject` protocol on the class instead.
+
+The documentation of the `NSObject` class is available
+[here](https://developer.apple.com/documentation/objectivec/nsobject?language=objc)
+and the protocol is available
+[here](https://developer.apple.com/documentation/objectivec/1418956-nsobject?language=objc).
+The header file for the `NSObject` class and protocol is available in the SDK
+which is installed along with Xcode. The path to the header file is:
+
+```bash
+SDK_ROOT="$(xcrun --show-sdk-path)"
+"$SDK_ROOT/usr/include/objc/NSObject.h"
+```
+
+For this application the following methods will be used: `alloc`, `init`,
+`retain` and `release`. The relevant part of the declaration of the `NSObject`
+class in Objective-C looks like this (some macros an Swift specific code has
+been removed):
+
+```objective-c
+@interface NSObject <NSObject>
+  - (instancetype)init
+  + (instancetype)alloc
+@end
+```
+
+In Objective-C the `@interface` keyword is used to declare a class. Within
+angle brackets (`<NSObject>`) are the protocols this class implements listed.
+
+Between the `@interface` and `@end` keywords are the methods declared. A method
+prefixed with a dash (`-`) declares an instance method. While a methods prefixed
+with a plus sign (`+`) declares a class method (static method).
+
+Within parentheses, `(instancetype)`, is the return type declared.
+`instancetype` is a unique Objective-C feature that does not have any
+corresponding feature in D. It basically means the type of an instance of this
+class. In the `NSObject` class the type will be `NSObject`. In a subclass it
+will be the type of the subclass.
+
+After the return type comes the method name or the selector, `init` and `alloc`
+in this case.
+
+The relevant parts of the `NSObject` protocol declaration look like this:
+
+```objective-c
+@protocol NSObject
+  - (instancetype)retain;
+  - (oneway void)release;
+@end
+```
+
+The `oneway` attribute in the return type of the `release` method is not
+relevant to this application.
+
+When writing bindings to the above Objective-C code in D, it would look like this:
+
+```d
+import core.attribute : selector;
+
+extern (Objective-C):
+extern:
+
+class NSObject
+{
+    NSObject init() @selector("init");
+    static NSObject alloc() @selector("alloc");
+
+    NSObject retain() @selector("retain");
+    void release() @selector("release");
+}
+```
+
+It's more or less the same syntax as for a regular D class.
+`extern (Objective-C)` is used to specify this is an Objective-C class.
+`extern` is used to specify this is an externally defined class. Just as any
+static/class method in D, the `static` keyword is used. Instead of the
+`instancetype` in the Objective-C code, the return type is hardcoded to match
+the class. In theory, `typeof(this)` could be used to more closely match the
+Objective-C code, but the type would not propagate to subclasses and it would
+be `NSObject` even in the subclasses.
+
+`@selector` is a compiler recognized user-defined attribute. It's used to
+specify the selector of the Objective-C method. A selector must be present for
+all Objective-C methods.
