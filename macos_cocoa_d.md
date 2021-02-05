@@ -99,25 +99,25 @@ process this will be the most idiomatic way for building applications for macOS.
 The first step is to create a new project in Xcode. At the Xcode launch screen,
 click `Create a new Xcode project`:
 
-![Xcode launch screen](method_1/light/xcode_launch_screen.png).
+![Xcode launch screen](method_1/light/xcode_launch_screen.png)
 
 Then choose the `macOS` platform and the `App` application:
 
-![Xcode project template](method_1/light/xcode_template.png).
+![Xcode project template](method_1/light/xcode_template.png)
 
 For the project options, enter a `Product Name`. Select `Storyboard` in the
 `Interface` dropdown. Select `Objective-C` in the `Language` dropdown and finally
 click next:
 
-![Xcode project options](method_1/light/xcode_project_options.png).
+![Xcode project options](method_1/light/xcode_project_options.png)
 
 After that, Xcode will show its main window with the project. Click the play
 button in the toolbar to make sure that the project compiles and runs:
 
-![Xcode main window](method_1/light/xcode_main_window.png).
+![Xcode main window](method_1/light/xcode_main_window.png)
 
 The application should launch within a couple of seconds and show its main
 window:
 
-![First window](method_1/light/first_window.png).
+![First window](method_1/light/first_window.png)
 
