@@ -224,8 +224,8 @@ The relevant parts of the `NSObject` protocol declaration look like this:
 @end
 ```
 
-The `oneway` attribute in the return type of the `release` method is not
-relevant to this application.
+A protocol is declared with the `@protocol` keyword. Otherwise the same syntax
+as for classes is used.
 
 When writing bindings to the above Objective-C code in D, it would look like this:
 
