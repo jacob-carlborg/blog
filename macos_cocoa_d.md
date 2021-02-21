@@ -246,14 +246,15 @@ class NSObject
 ```
 
 It's more or less the same syntax as for a regular D class.
-`extern (Objective-C)` is used to specify this is an Objective-C class.
-`extern` is used to specify this is an externally defined class. Just as any
-static/class method in D, the `static` keyword is used. Instead of the
-`instancetype` in the Objective-C code, the return type is hardcoded to match
-the class. In theory, `typeof(this)` could be used to more closely match the
-Objective-C code, but the type would not propagate to subclasses and it would
-be `NSObject` even in the subclasses.
+[`extern (Objective-C)`](https://dlang.org/spec/attribute.html#linkage) is used
+to specify this is an Objective-C class. `extern` is used to specify this is an
+externally defined class. Just as any static/class method in D, the `static`
+keyword is used. Instead of the `instancetype` in the Objective-C code, the
+return type is hardcoded to match the class. In theory, `typeof(this)` could be
+used to more closely match the Objective-C code, but the type would not
+propagate to subclasses and it would be `NSObject` even in the subclasses.
 
-`@selector` is a compiler recognized user-defined attribute. It's used to
-specify the selector of the Objective-C method. A selector must be present for
-all Objective-C methods.
+[`@selector`](https://dlang.org/phobos/core_attribute.html#.selector) is a
+compiler recognized user-defined attribute. It's used to specify the selector
+of the Objective-C method. A selector must be present for all Objective-C
+methods.
