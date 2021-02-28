@@ -230,6 +230,8 @@ as for classes is used.
 When writing bindings to the above Objective-C code in D, it would look like this:
 
 ```d
+module objc.nsobject;
+
 import core.attribute : selector;
 
 extern (Objective-C):
@@ -258,3 +260,58 @@ propagate to subclasses and it would be `NSObject` even in the subclasses.
 compiler recognized user-defined attribute. It's used to specify the selector
 of the Objective-C method. A selector must be present for all Objective-C
 methods.
+
+#### `NSViewController`
+
+From `NSViewController`, we need the following methods for this application:
+`viewDidLoad` and `setRepresentedObject`. The relevant Objective-C code looks
+like this:
+
+```objective-c
+@interface NSViewController : NSResponder
+@property (nullable, strong) id representedObject;
+- (void)viewDidLoad;
+@end
+```
+
+The documentation is available [here](https://developer.apple.com/documentation/appkit/nsviewcontroller?language=objc).
+The header file is available at this path:
+
+```bash
+"$SDK_ROOT/System/Library/Frameworks/AppKit.framework/Headers/NSViewController.h"
+```
+
+In Objective-C the `@property` keyword is used to declare a property.
+Properties work more or less the same as in D, but they have a more strict
+syntax in Objective-C. That is, not all methods can be called with the property
+syntax. Inside parentheses, `nullable` means the value can be `null` and
+`strong` means it's a retained strong reference. The `id` type is a type that
+can hold any Objective-C class or protocol.
+
+The Objective-C integration in D currently doesn't support properties, but
+Objective-C properties can be called like a regular method. We can take
+advantage of that and emulate properties in the bindings. The `NSViewController`
+class would look like this in D:
+
+```d
+import core.attribute : selector;
+import appkit.nsresponder;
+
+extern (Objective-C):
+extern:
+
+class NSViewController : NSResponder
+{
+    NSObject representedObject() @selector("representedObject");
+    void representedObject(NSObject representedObject) @selector("setRepresentedObject:");
+
+    void viewDidLoad() @selector("viewDidLoad");
+}
+```
+
+In D, `NSObject` can be used instead of `id` to hold any classes. To emulate
+properties, overloading can be used to declare the `representedObject` method
+twice, with different signatures and different selectors. The first declaration
+will be the getter and the second will be the setter. With the help of D's
+support for calling any method with property syntax we have managed to emulate
+Objective-C properties in the bindings layer.
