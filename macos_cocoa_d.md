@@ -153,9 +153,9 @@ Now it's time to replace the existing Objective-C with pure D code. If we take
 a look at the existing Objective-C files and headers, we can see that the code
 depends, either directly or indirectly, on the following framework types:
 
-* `NSViewController`
-* `NSResponder`
 * `NSObject`
+* `NSResponder`
+* `NSViewController`
 * `NSApplicationDelegate`
 * `NSNotification`
 
@@ -261,24 +261,56 @@ compiler recognized user-defined attribute. It's used to specify the selector
 of the Objective-C method. A selector must be present for all Objective-C
 methods.
 
+#### `NSResponder`
+
+From `NSResponder` no methods are really needed, it's mostly included for
+completeness. The documentation for `NSResponder` is available [here](https://developer.apple.com/documentation/appkit/nsresponder?language=objc).
+The header file is available at this path:
+
+```bash
+"$SDK_ROOT/System/Library/Frameworks/AppKit.framework/Headers/NSResponder.h"
+```
+
+The Objective-C declaration looks as follows:
+
+```objective-c
+@interface NSResponder : NSObject <NSCoding>
+@end
+```
+
+Translated to D, it will look like:
+
+```d
+module appkit.nsresponder;
+
+import core.attribute : selector;
+import objc.nsobject;
+
+extern (Objective-C):
+extern:
+
+class NSResponder : NSObject
+{
+}
+```
+
 #### `NSViewController`
 
-From `NSViewController`, we need the following methods for this application:
-`viewDidLoad` and `setRepresentedObject`. The relevant Objective-C code looks
-like this:
+From `NSViewController`, we need the following methods for this: `viewDidLoad`
+and `setRepresentedObject`. The documentation is available [here](https://developer.apple.com/documentation/appkit/nsviewcontroller?language=objc).
+The header file is available at this path:
+
+```bash
+"$SDK_ROOT/System/Library/Frameworks/AppKit.framework/Headers/NSViewController.h"
+```
+
+The relevant Objective-C code looks like this:
 
 ```objective-c
 @interface NSViewController : NSResponder
 @property (nullable, strong) id representedObject;
 - (void)viewDidLoad;
 @end
-```
-
-The documentation is available [here](https://developer.apple.com/documentation/appkit/nsviewcontroller?language=objc).
-The header file is available at this path:
-
-```bash
-"$SDK_ROOT/System/Library/Frameworks/AppKit.framework/Headers/NSViewController.h"
 ```
 
 In Objective-C the `@property` keyword is used to declare a property.
@@ -294,6 +326,8 @@ advantage of that and emulate properties in the bindings. The `NSViewController`
 class would look like this in D:
 
 ```d
+module appkit.nsview_controller;
+
 import core.attribute : selector;
 import appkit.nsresponder;
 
